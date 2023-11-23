@@ -1,4 +1,4 @@
-#Import the required python packages 
+packages required for this project
 
 from googleapiclient.discovery import build
 import pandas as pd
