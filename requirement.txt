@@ -6,3 +6,8 @@ import pymongo
 import psycopg2
 import streamlit as st
 
+
+pip install pandas
+pip install pymongo
+pip install psycopg2
+pip install streamli
