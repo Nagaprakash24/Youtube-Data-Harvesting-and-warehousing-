@@ -45,7 +45,7 @@ This is a Basic Project to Dive into the Data's,this Project is Dedicated to cre
 ## Storing Data in MongoDB
   The Fetched data is securely stored in a MongoDB database with proper user authorization. In cases where the data already exists in the database, any subsequent attempts to insert the same data will automatically lead to data overwriting. This storage mechanism ensures efficient and updated data management and preservation, simplifying the process of handling the collected data.
   
-## Data Migration to a MySQL Data Warehouse
+## Data migration to postgreSQL Data warehouse
   This application empowers users to transfer data from MongoDB to a MySQL data warehouse seamlessly. Users can choose the specific channel they want to migrate from the displayed list, enabling a tailored approach to data handling.The data migration process involves transforming and structuring the collected data, ensuring it aligns with the structured format of a MySQL database.Facilitating a seamless transition of data from MongoDB to postgreSQL for further analysis and insights.
   
 ## Contribution Guidelines
