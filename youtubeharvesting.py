@@ -4,13 +4,17 @@ import pandas as pd
 import pymongo
 import psycopg2
 import streamlit as st
+from PIL import Image
+from streamlit_extras.app_logo import add_logo
+from streamlit_option_menu import option_menu
+import requests
 
 #Import the required python packages 
 
 #Function for Api key
 def API_CONNECT():
     #get APIKEY to access youtube data
-    Api_key="AIzaSyCXU6Witdd6MvhmYtGUEAFbab0rwBKtTuE"
+    Api_key="AIzaSyDrx61KoJL-ee7k8rT2cTgqS2J6hmkB894"
     Api_name="youtube"
     Api_version="v3"
     #assign all these in a variable
@@ -677,53 +681,135 @@ def show_comment_tables():
 
 #now writing program interface of webpage
 #streamlit part
-#create a sidebar for webpage
-with st.sidebar:
-    st.title(":blue[YOUTUBE DATA HARVESTING AND WAREHOUSING]")
-    st.header("SKILLS TAKE AWAY")
-    st.caption("API Integration")
-    st.caption("Python scripting")
-    st.caption("Data Collection")
-    st.caption("MongoDB")
-    st.caption("Data Management using MongoDB and SQL")
-    st.caption("Streamlit")
-#create letter inside the searchbar   
-channel_id=st.text_input("Enter the channel id")
 
-#create a button
-if st.button("Store the Data"):
-    ch_ids=[]
-    db=client["YT_DATA"]
-    coll1=db["CH_DATA"]
-    for ch_data in coll1.find({},{"_id":0,"Channel_Information":1}):
-        ch_ids.append(ch_data["Channel_Information"]["Channel_ID"])
+#Create Page Config
+st.set_page_config(page_title="Youtube harvesting", page_icon=":clapper:", layout="wide")
+
+
+def local_css(file_name):
+    with open(file_name)as f:
+        st.markdown(f"<style>{f.read()}</style>",unsafe_allow_html=True)
+             
+local_css("style/style.css")
+
+def load_image(image_path):
+    return Image.open(image_path)
         
-    if channel_id in ch_ids:
-        st.success("Channel details of the given channel id: " + channel_id + " already exists")
-    else:
-        insert=channel_details(channel_id)
-        st.success(insert)
+#now creating a option menu
+with st.sidebar:
     
-if st.button("Migrate to SQL"): 
-     Table=tables()
-     st.success(Table)
-     
-show_table=st.radio("SELECT THE TABLE FOR VIEW",("CHANNELS","PLAYLISTS","VIDEOS","COMMENTS"))
+    image = load_image("c:/Users/prakash/Documents/project-1/youlogo.png")
+    st.sidebar.image(image, width=210)
+                         
+    selected = option_menu("Youtube Data Harvesting and Warehousing", ["Home", 'Harvest the Data','Insert data into SQL','View the Tables','SQL Queries','Contact Information'], 
+        icons=['house', 'gear'], menu_icon="cast", default_index=1)
+    selected
+    
+   
+if selected == "Home":
+    st.image('peakpx.jpg',width=600, use_column_width=True, clamp=False, channels="RGB", output_format="auto")
+    st.title(":blue[YOUTUBE DATA HARVESTING AND WAREHOUSING]")
+    st.subheader("INTRODUCTION")
+    st.write(""" The YouTube Data Harvesting and Warehousing project involves collecting, storing, and analyzing data from YouTube using Python, SQL databases, MongoDB, and presenting the insights through a Streamlit web application.
+                 This project aims to create a comprehensive pipeline for extracting valuable information from YouTube videos, storing it efficiently, and providing an interactive dashboard for users to explore the data. """)
+    st.header("COMPONENTS")
+    st.subheader("Data Harvesting with Python:")
+    st.write(""" - Utilize the YouTube API (using google-api-python-client library) to fetch data such as video details, comments, likes, and views.
+                  Extract relevant information, including video titles, descriptions, upload dates, and user interactions. """)
+    st.subheader("SQL Database for Structured Data: ")
+    st.write(""" - Design and create a SQL database (e.g., using SQLite or MySQL) to store structured data like video metadata.
+                   Define tables to organize information efficiently, such as a table for videos, a table for comments, etc. """)
+    st.subheader("MongoDB for Unstructured Data: ")
+    st.write("""- Use MongoDB, a NoSQL database, to store unstructured data, such as comments or user-related information.
+                  Leverage MongoDB's flexibility to handle varying data structures.  """)
+    st.subheader("Data Warehousing:")
+    st.write(""" - Develop a data warehousing strategy to merge and transform data from different sources into a unified format.
+                  Create a pipeline to regularly update the warehouse with new YouTube data.  """)
+    st.subheader("Streamlit Dashboard: ")
+    st.write(""" - Build a Streamlit web application to visualize and interact with the YouTube data.
+                   Incorporate charts, graphs, and tables to showcase insights and trends from the harvested data.
+                   Allow users to filter and explore the data dynamically. """)
+    st.header("Key Features:")
+    st.subheader("Real-time Data Updates:")
+    st.write(""" Implement mechanisms to regularly fetch and update YouTube data. """)
+    st.subheader("User Authentication:")
+    st.write("""Secure the Streamlit dashboard with user authentication to control access to the insights. """)
+    st.subheader("Interactive Visualizations:")
+    st.write(""" Use Streamlit's interactive features to enhance the user experience with dynamic charts and filters. """)
+    st.subheader(" Scalability: ")
+    st.write(""" Design the system to handle a growing volume of YouTube data over time. """)
+    st.header("Use Cases:")
+    st.subheader("Content Creators:")
+    st.write("""Track the performance of their videos, analyze viewer engagement, and gather insights for content improvement. """)
+    st.subheader("Marketers:")
+    st.write("""Understand trends, identify popular content, and monitor comments for audience sentiment. """)
+    st.subheader("Researchers:")
+    st.write(" Analyze YouTube data for academic purposes or social studies.")
+    
+    
+    st.header("SKILLS TAKE AWAY")
+    st.write("API Integration")
+    st.write("Python scripting")
+    st.write("Data Collection")
+    st.write("MongoDB")
+    st.write("Data Management using MongoDB and SQL")
+    st.write("Streamlit")
+    
+    st.header("Conclusion:")
+    st.write("""The YouTube Data Harvesting and Warehousing project provides a powerful solution for collecting, storing, and exploring YouTube data efficiently. 
+             This comprehensive system enables users to gain valuable insights from YouTube videos through a user-friendly Streamlit interface. """)
 
-if show_table=="CHANNELS":
-    show_channels_table()
-    
-elif show_table=="PLAYLISTS":
-    show_playlist_table()
-    
-elif show_table=="VIDEOS":
-    show_videos_table()
-    
-elif show_table=="COMMENTS":
-    show_comment_tables()
-    
-    
-    
+elif selected == "Harvest the Data":
+    st.image('dataharvest.jpg',width=700, use_column_width=False, clamp=False, channels="RGB", output_format="auto") 
+    channel_id=st.text_input("Enter the channel id :arrow_down:")
+    st.markdown("---")
+   
+
+if selected == "Harvest the Data":  
+    #create a button
+    if st.button("Store the Data"):
+        ch_ids=[]
+        db=client["YT_DATA"]
+        coll1=db["CH_DATA"]
+        for ch_data in coll1.find({},{"_id":0,"Channel_Information":1}):
+            ch_ids.append(ch_data["Channel_Information"]["Channel_ID"])
+            
+        if channel_id in ch_ids:
+            st.success("Channel details of the given channel id: " + channel_id + " already exists")
+        
+        else:
+            insert=channel_details(channel_id)
+            st.success(insert)
+
+if selected == "Insert data into SQL":             
+    st.image('datawarehousing.jpg',width=400, use_column_width=False, clamp=False, channels="RGB", output_format="auto") 
+    st.markdown("---")       
+    st.subheader("Hey Mate,You can Transfer your Data to Sql here...!")
+    st.write("Just Click This :arrow_down:")  
+    if st.button("Migrate to SQL") :   
+        Table=tables()
+        st.success(Table)
+        
+      
+
+if selected == "View the Tables":
+  
+    show_table = st.radio("SELECT THE TABLE FOR VIEW",("CHANNELS","PLAYLISTS","VIDEOS","COMMENTS"))
+
+
+    if show_table =="CHANNELS":
+        show_channels_table()
+
+    if show_table =="PLAYLISTS":
+        show_playlist_table()
+                
+    if show_table =="VIDEOS":
+        show_videos_table()
+                
+    if show_table =="COMMENTS":
+        show_comment_tables()
+
+   
 #sql connection to streamlit
 
 mydb=psycopg2.connect(host="localhost",
@@ -734,170 +820,187 @@ mydb=psycopg2.connect(host="localhost",
                     )
 cursor=mydb.cursor()
 #create a variable for 10 querys,selectbox is used to select questions
-question=st.selectbox(
-    'Please Select Your Questions',
-    ('1. All the videos and the Channel Name',
-     '2. Channels with most number of views',
-     '3. 10 most viewed videos',
-     '4. Comments in each videos',
-     '5. Videos with highest like',
-     '6. likes of all videos',
-     '7. views of each channel',
-     '8. videos published in the year 2022',
-     '9. Average duration of all videos in each channel',
-     '10. Videos with highest number of comments'))
+if selected == "SQL Queries":
+    with st.container():
+        question = st.selectbox(
+            'Please Select Your Questions',
+           ('1. All the videos and the Channel Name',
+            '2. Channels with most number of views',
+            '3. 10 most viewed videos',
+            '4. Comments in each videos',
+            '5. Videos with highest like',
+            '6. likes of all videos',
+            '7. views of each channel',
+            '8. videos published in the year 2022',
+            '9. Average duration of all videos in each channel',
+            '10. Videos with highest number of comments'))
 
 
 
 #sql connection to streamlit
 
-mydb=psycopg2.connect(host="localhost",
-                    user="postgres",
-                    password="PRAKASH",
-                    database="DATA_OF_YOUTUBE",
-                    port="5432"
-                    )
-cursor=mydb.cursor()
+    if question =='1. All the videos and the Channel Name':
+        #answer for the query1
+        query1='''select title as videos,channel_name as channelname from videos'''
+        cursor.execute(query1)
+        mydb.commit()
+        #create a variable t1 to fetchall data fetchall is default
+        t1=cursor.fetchall()
+        df=pd.DataFrame(t1,columns=["Video Title","Channel Name"])
+        st.write(df)
+        
+            
+
+    if question =='2. Channels with most number of views':
+        #write aquery
+        query2='''select channel_name as channelname ,total_videos as no_videos from channels
+                    order by total_videos desc'''
+        cursor.execute(query2)
+        mydb.commit()
+        #create a variable t2to fetchall data fetchall is default
+        t2=cursor.fetchall()
+        df2=pd.DataFrame(t2,columns=["channel name","No of videos"])
+            #add the df2 to st streamlit
+        st.write(df2)
+        
+        
+
+    if question =='3. 10 most viewed videos':
+        #write aquery
+        query3='''select views as views ,channel_name as channelname,title as videotitle from videos
+                    where views is not null order by views desc limit 10'''
+        cursor.execute(query3)
+        mydb.commit()
+        #create a variable t3 to fetchall data fetchall is default
+        t3=cursor.fetchall()
+        df3=pd.DataFrame(t3,columns=["views","channel name","videotitle"])
+        #add the df3 to st streamlit
+        st.write(df3)   
+        
 
 
-if question=='1. All the videos and the Channel Name':
-    #answer for the query1
-    query1='''select title as videos,channel_name as channelname from videos'''
-    cursor.execute(query1)
-    mydb.commit()
-    #create a variable t1 to fetchall data fetchall is default
-    t1=cursor.fetchall()
-    df=pd.DataFrame(t1,columns=["Video Title","Channel Name"])
-    st.write(df)
-    
-    
- 
-elif question=='2. Channels with most number of views':
+    if question =='4. Comments in each videos':
+        #write aquery
+        query4='''select comments as no_comments,title as videotitle from videos where comments is not null'''
+        cursor.execute(query4)
+        mydb.commit()
+        #create a variable t4 to fetchall data fetchall is default
+        t4=cursor.fetchall()
+        df4=pd.DataFrame(t4,columns=["no of comments","videotitle"])
+        #add the df4 to st streamlit
+        st.write(df4)   
+            
+
+
+
+    if question =='5. Videos with highest like':
+        #write aquery
+        query5='''select title as videotitle,channel_name as channelname,likes as likecount
+                    from videos where likes is not null order by likes desc'''
+        cursor.execute(query5)
+        mydb.commit()
+        #create a variable t5 to fetchall data fetchall is default
+        t5=cursor.fetchall()
+        df5=pd.DataFrame(t5,columns=["videotitle","channelname","likecount"])
+        #add the df5 to st streamlit
+        st.write(df5)    
+        
+        
+
+    if question =='6. likes of all videos':
+        #write aquery
+        query6='''select likes as likecount,title as videotitle from videos '''
+        cursor.execute(query6)
+        mydb.commit()
+        #create a variable t6 to fetchall data fetchall is default
+        t6=cursor.fetchall()
+        df6=pd.DataFrame(t6,columns=["likecount","videotitle"])
+        #add the df6 to st streamlit
+        st.write(df6)     
+        
+
+
+    if question =='7. views of each channel':
+        #write aquery
+        query7='''select channel_name as channelname,views as totalviews from channels'''
+        cursor.execute(query7)
+        mydb.commit()
+        #create a variable t7 to fetchall data fetchall is default
+        t7=cursor.fetchall()
+        df7=pd.DataFrame(t7,columns=["likecount","videotitle"])
+        #add the df7 to st streamlit
+        st.write(df7)     
+        
+        
+
+    if question =='8. videos published in the year 2022':
+        #write aquery
+        query8='''select title as video_title,published_date as videorelease,channel_name as channelname from videos
+                    where extract(year from published_date)=2022'''
+        cursor.execute(query8)
+        mydb.commit()
+        #create a variable t8 to fetchall data fetchall is default
+        t8=cursor.fetchall()
+        df8=pd.DataFrame(t8,columns=["videotitle","published_date","channelname"])
+        #add the df8 to st streamlit
+        st.write(df8) 
+        
+
+
+    if question =='9. Average duration of all videos in each channel':
+        #write aquery
+        query9='''select channel_name as channelname,AVG(duration) as averageduration from videos group by channel_name'''
+        cursor.execute(query9)
+        mydb.commit()
+        #create a variable t1 to fetchall data fetchall is default
+        t9=cursor.fetchall()
+        df9=pd.DataFrame(t9,columns=["channelname","averageduration"])
+        #create empty to append the value as a string 
+        T9=[]
+        for index,row in df9.iterrows():
+            channel_title=row["channelname"]
+            average_duration=row["averageduration"]
+            average_duration_str=str(average_duration)
+            T9.append(dict(channeltitle=channel_title,avgduration=average_duration_str))
+        #convert the T9 into dataframe
+        df1=pd.DataFrame(T9)
+        st.write(df1)
+
+
+    if question =='10. Videos with highest number of comments':
     #write aquery
-    query2='''select channel_name as channelname ,total_videos as no_videos from channels
-                order by total_videos desc'''
-    cursor.execute(query2)
-    mydb.commit()
-    #create a variable t2to fetchall data fetchall is default
-    t2=cursor.fetchall()
-    df2=pd.DataFrame(t2,columns=["channel name","No of videos"])
+        query10='''select title as videotitle,channel_name as channelname,comments as comments from videos where comments
+                        is not null order by comments desc'''
+        cursor.execute(query10)
+        mydb.commit()
+        #create a variable t1 to fetchall data fetchall is default
+        t10=cursor.fetchall()
+        df10=pd.DataFrame(t10,columns=["video title","channel name","comments"])
         #add the df2 to st streamlit
-    st.write(df2)
-       
-    
- 
-elif question=='3. 10 most viewed videos':
-    #write aquery
-    query3='''select views as views ,channel_name as channelname,title as videotitle from videos
-                where views is not null order by views desc limit 10'''
-    cursor.execute(query3)
-    mydb.commit()
-    #create a variable t3 to fetchall data fetchall is default
-    t3=cursor.fetchall()
-    df3=pd.DataFrame(t3,columns=["views","channel name","videotitle"])
-    #add the df3 to st streamlit
-    st.write(df3)   
-    
-
- 
-elif question=='4. Comments in each videos':
-    #write aquery
-    query4='''select comments as no_comments,title as videotitle from videos where comments is not null'''
-    cursor.execute(query4)
-    mydb.commit()
-    #create a variable t4 to fetchall data fetchall is default
-    t4=cursor.fetchall()
-    df4=pd.DataFrame(t4,columns=["no of comments","videotitle"])
-    #add the df4 to st streamlit
-    st.write(df4)   
-        
+        st.write(df10)  
 
 
- 
-elif question=='5. Videos with highest like':
-    #write aquery
-    query5='''select title as videotitle,channel_name as channelname,likes as likecount
-                from videos where likes is not null order by likes desc'''
-    cursor.execute(query5)
-    mydb.commit()
-    #create a variable t5 to fetchall data fetchall is default
-    t5=cursor.fetchall()
-    df5=pd.DataFrame(t5,columns=["videotitle","channelname","likecount"])
-    #add the df5 to st streamlit
-    st.write(df5)    
-    
-    
- 
-elif question=='6. likes of all videos':
-    #write aquery
-    query6='''select likes as likecount,title as videotitle from videos '''
-    cursor.execute(query6)
-    mydb.commit()
-    #create a variable t6 to fetchall data fetchall is default
-    t6=cursor.fetchall()
-    df6=pd.DataFrame(t6,columns=["likecount","videotitle"])
-    #add the df6 to st streamlit
-    st.write(df6)     
-    
 
- 
-elif question=='7. views of each channel':
-    #write aquery
-    query7='''select channel_name as channelname,views as totalviews from channels'''
-    cursor.execute(query7)
-    mydb.commit()
-    #create a variable t7 to fetchall data fetchall is default
-    t7=cursor.fetchall()
-    df7=pd.DataFrame(t7,columns=["likecount","videotitle"])
-    #add the df7 to st streamlit
-    st.write(df7)     
-    
-    
- 
-elif question=='8. videos published in the year 2022':
-    #write aquery
-    query8='''select title as video_title,published_date as videorelease,channel_name as channelname from videos
-                where extract(year from published_date)=2022'''
-    cursor.execute(query8)
-    mydb.commit()
-    #create a variable t8 to fetchall data fetchall is default
-    t8=cursor.fetchall()
-    df8=pd.DataFrame(t8,columns=["videotitle","published_date","channelname"])
-    #add the df8 to st streamlit
-    st.write(df8) 
-    
+if selected == 'Contact Information':
 
- 
-elif question=='9. Average duration of all videos in each channel':
-    #write aquery
-    query9='''select channel_name as channelname,AVG(duration) as averageduration from videos group by channel_name'''
-    cursor.execute(query9)
-    mydb.commit()
-    #create a variable t1 to fetchall data fetchall is default
-    t9=cursor.fetchall()
-    df9=pd.DataFrame(t9,columns=["channelname","averageduration"])
-    #create empty to append the value as a string 
-    T9=[]
-    for index,row in df9.iterrows():
-        channel_title=row["channelname"]
-        average_duration=row["averageduration"]
-        average_duration_str=str(average_duration)
-        T9.append(dict(channeltitle=channel_title,avgduration=average_duration_str))
-    #convert the T9 into dataframe
-    df1=pd.DataFrame(T9)
-    st.write(df1)
-    
- 
-elif question=='10. Videos with highest number of comments':
-    #write aquery
-    query10='''select title as videotitle,channel_name as channelname,comments as comments from videos where comments
-                 is not null order by comments desc'''
-    cursor.execute(query10)
-    mydb.commit()
-    #create a variable t1 to fetchall data fetchall is default
-    t10=cursor.fetchall()
-    df10=pd.DataFrame(t10,columns=["video title","channel name","comments"])
-    #add the df2 to st streamlit
-    st.write(df10)  
-        
 
+    st.write("---")
+    st.header(":mailbox: Get in touch with Me")
+    st.write("##")
+    
+    contact_form = """  
+    <form action="https://formsubmit.co/nagaprakash48@gmail.com" method="POST">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="text" name="name" placeholder="yourname" required>
+        <input type="email" name="email" placeholder="youremail" required>
+        <textarea name="message" placeholder="message here" required></textarea>
+        <button type="submit">Send</button>
+</form>
+"""
+
+    st.markdown(contact_form,unsafe_allow_html=True)
+    st.markdown("---")
+    st.header("ABOUT:")
+    st.write("For inquiries or collaboration opportunities related to the YouTube Data Harvesting and Warehousing project,please feel free to reach out to us.We welcome discussions on data analytics, Python development, database management, and Streamlit visualization.")
+    st.markdown("---")
+    st.markdown("[Linkedin >](https://www.linkedin.com/in/naga-prakash-j-280aba1b9?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_apps)")
